@@ -13,6 +13,12 @@
             ByteArrayOutputStream]
            [java.nio.charset Charset]))
 
+(try
+  (import '[org.projectodd.wunderboss.web.async Channel])
+  (def immutant? true)
+  (catch Exception e
+    (def immutant? false)))
+
 (set! *warn-on-reflection* true)
 
 (def available-charsets
@@ -25,6 +31,7 @@
   [_ {:keys [body] :as response}]
   (when response
     (not (or
+          (if immutant? (instance? Channel body) false)
           (string? body)
           (instance? File body)
           (instance? InputStream body)))))
